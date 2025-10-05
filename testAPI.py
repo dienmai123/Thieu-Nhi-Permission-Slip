@@ -6,7 +6,7 @@ url = "https://api.docuseal.com/submissions"
 
 headers = {
     #"X-Auth-Token": os.getenv("API_TOKEN")
-    "X-Auth-Token" : 'FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4'
+    "X-Auth-Token" : ''
 }
 
 
@@ -27,4 +27,5 @@ else:
 
 '''
 pprint.pprint(data['data'][2]['status'])
+
 
