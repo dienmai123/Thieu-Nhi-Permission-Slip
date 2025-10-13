@@ -1,4 +1,5 @@
 #update_info_google_sheet.py
+import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
@@ -15,7 +16,7 @@ COLUMN_A1 = "A:A"         # which column to append into
 # ---- AUTH ----
 def _get_service():
     creds = Credentials.from_service_account_file(
-        "e-ngiem-tap-dd92e14e408c.json",
+        os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "e-ngiem-tap-dd92e14e408c.json"),
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     return build("sheets", "v4", credentials=creds)
