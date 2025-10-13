@@ -24,11 +24,6 @@ jobs:
           pip install -r requirements.txt || true
           pip install google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2 requests
 
-      - name: Write service account JSON to file
-        # Use printf to preserve newlines exactly
-        run: |
-          printf '%s' "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > creds.json
-
       - name: Run update script
         env:
           DOCUSEAL_API_TOKEN: "FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4"
@@ -37,6 +32,7 @@ jobs:
           SHEET_NAME: "Sheet1"
           APPEND_RANGE: "A:A"
           START_CELL: "A2"
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
         run: |
           python run_update.py
 
