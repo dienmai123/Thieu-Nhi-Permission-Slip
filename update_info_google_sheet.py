@@ -1,27 +1,35 @@
 #update_info_google_sheet.py
-import os,json
+import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
-from google.oauth2 import service_account
+
 
 # ---- EXAMPLE GOOGLE API ----
 # https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit?gid=SHEET_ID#gid=SHEET_ID
 
 
 # ---- SETTINGS ----
-SPREADSHEET_ID = "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA"       # Parse in the target google sheet ID
+SPREADSHEET_ID = "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA" 
 SHEET_NAME = "Sheet1"     # must match the tab label exactly
 START_CELL = "A2"         # where updates begin
 COLUMN_A1 = "A:A"         # which column to append into
 
 # ---- AUTH ----
 def _get_service():
-    creds_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
-    creds = service_account.Credentials.from_service_account_info(
-        creds_info,
+    cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "e-ngiem-tap-69a3e7733ae6.json")
+    if not os.path.exists(cred_path):
+        raise RuntimeError(f"Google credentials file not found at {cred_path}")
+    scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    creds = Credentials.from_service_account_file(cred_path, scopes=scopes)
+    return build("sheets", "v4", credentials=creds)
+'''
+def _get_service():
+    creds = Credentials.from_service_account_file(
+        "e-ngiem-tap-69a3e7733ae6.json",
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     return build("sheets", "v4", credentials=creds)
+'''
 
 # ---- SHEET UPDATE ----
 def update_colmun(values_id,sheetID: str,sheet_name: str,start_cell:str):
@@ -57,7 +65,7 @@ arr1 = [1,2,3,4]
 
 if __name__ == "__main__":
     # Append
-    #result = append_column(arr1,SPREADSHEET_ID,SHEET_NAME,COLUMN_A1)
+    # result = append_column(arr1,SPREADSHEET_ID,SHEET_NAME,COLUMN_A1)
 
     # Update
     #resultUpdate = update_colmun(arr1,SPREADSHEET_ID,SHEET_NAME,START_CELL)

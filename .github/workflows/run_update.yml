@@ -1,14 +1,17 @@
-name: Run DocuSeal → Google Sheets sync
+name: Daily run_update
 
 on:
+  # Runs every day at ~8:00 AM America/Chicago during DST (GitHub uses UTC)
   schedule:
-    # runs 15:00 UTC daily (adjust as you like)
-    - cron: "0 15 * * *"
+    - cron: "0 13 * * *"
+  # Let you run it manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  run:
+  run-update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Check out repo
@@ -17,22 +20,33 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt || true
-          pip install google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2 requests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run update script
+      - name: Write Google credentials file and export path
         env:
-          DOCUSEAL_API_TOKEN: "FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4"
-          SPREADSHEET_ID: "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA"
-          GOOGLE_APPLICATION_CREDENTIALS: creds.json
-          SHEET_NAME: "Sheet1"
-          APPEND_RANGE: "A:A"
-          START_CELL: "A2"
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
         run: |
-          python run_update.py
+          if [ -z "$GOOGLE_APPLICATION_CREDENTIALS_JSON" ]; then
+            echo "Missing GOOGLE_APPLICATION_CREDENTIALS_JSON secret" >&2
+            exit 1
+          fi
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > sa.json
+          # Make it available to all subsequent steps (standard pattern)
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$PWD/sa.json" >> "$GITHUB_ENV"
 
+      - name: Run updater
+        env:
+          DOCUSEAL_API_TOKEN: ${{ secrets.DOCUSEAL_API_TOKEN }}
+          # also pass through for libraries that respect this var directly
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          if [ -z "$DOCUSEAL_API_TOKEN" ]; then
+            echo "Missing DOCUSEAL_API_TOKEN secret" >&2
+            exit 1
+          fi
+          python run_update.py
