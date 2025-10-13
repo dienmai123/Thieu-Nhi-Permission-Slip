@@ -4,7 +4,7 @@ import requests
 
 # ---- CONFIG ----
 DOCUSEAL_URL = "https://api.docuseal.com/submitters"
-API_TOKEN = os.getenv("DOCUSEAL_API_TOKEN") or "FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4"  # fallback if env var not set
+API_TOKEN = os.getenv("DOCUSEAL_API_TOKEN") or 'FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4' # fallback if env var not set
 
 
 def fetch_submitter_names(url: str, api_token: str) -> list[str]:

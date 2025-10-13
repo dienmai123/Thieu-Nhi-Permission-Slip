@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 
 
 # ---- SETTINGS ----
-SPREADSHEET_ID = ""       # Parse in the target google sheet ID
+SPREADSHEET_ID = "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA"       # Parse in the target google sheet ID
 SHEET_NAME = "Sheet1"     # must match the tab label exactly
 START_CELL = "A2"         # where updates begin
 COLUMN_A1 = "A:A"         # which column to append into
