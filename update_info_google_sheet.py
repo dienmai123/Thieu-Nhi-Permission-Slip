@@ -15,8 +15,9 @@ COLUMN_A1 = "A:A"         # which column to append into
 
 # ---- AUTH ----
 def _get_service():
+    creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "creds.json")
     creds = Credentials.from_service_account_file(
-        ("e-ngiem-tap-dd92e14e408c.json"),
+        creds_path,
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     return build("sheets", "v4", credentials=creds)
