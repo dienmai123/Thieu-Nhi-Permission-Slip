@@ -1,0 +1,52 @@
+# This is a basic workflow that is manually triggered
+
+name: Run DocuSeal → Google Sheets sync
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  schedule:
+  #cron(Minutes | Hours | Day-of-month | Month | Day-of-week | Year)
+  - cron: "0 15 * * *"
+  workflow_dispatch: {} # manual "Run workflow" button in GitHub UI
+
+jobs: 
+  runs:
+    runs-on: ubuntu-latest
+
+    #This is where the workflow starts
+    steps:
+      - name: check out repo
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || true
+          pip install google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2 requests
+
+      - name: Write Service Account to a file
+        # We store the whole JSON as an Actions secret, then write it to creds.json
+        run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > creds.json
+
+      - name: Update script #(updating all the necessary variables)
+        env: 
+          #Private
+          DOCUSEAL_API_TOKEN: ${{ secrets.DOCUSEAL_API_TOKEN }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID}}
+          GOOGLE_APPLICATION_CREDENTIALS: creds.json
+          
+
+          #Non-Private
+          SHEET_NAME: Sheet1
+          APPEND_RANGE: A:A
+          START_CELL: A2
+        run: |
+          python run_update.py
+      
+    
+  
