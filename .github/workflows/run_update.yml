@@ -31,12 +31,12 @@ jobs:
 
       - name: Run update script
         env:
-          DOCUSEAL_API_TOKEN: ${{ secrets.DOCUSEAL_API_TOKEN }}
-          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+          DOCUSEAL_API_TOKEN: "FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4"
+          SPREADSHEET_ID: "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA"
           GOOGLE_APPLICATION_CREDENTIALS: creds.json
-          SHEET_NAME: Sheet1
-          APPEND_RANGE: A:A
-          START_CELL: A2
+          SHEET_NAME: "Sheet1"
+          APPEND_RANGE: "A:A"
+          START_CELL: "A2"
         run: |
           python run_update.py
 
