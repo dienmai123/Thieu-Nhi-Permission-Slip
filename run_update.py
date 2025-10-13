@@ -8,7 +8,7 @@ DOCUSEAL_URL = "https://api.docuseal.com/submitters"
 API_TOKEN = os.getenv("DOCUSEAL_API_TOKEN") or ""  # fallback if env var not set
 
 # ---- CONFIG GOOGLE SHEET ----
-SPREADSHEET_ID = "1cL_1bYaq3Z5wXmOGq8W-t6C6tybyh7MQ-qoxzQfxBKA"
+SPREADSHEET_ID = ""
 SHEET_NAME = "Sheet1"     # must match the tab label exactly
 START_CELL = "A2"         # where updates begin
 COLUMN_A1 = "A:A"         # which column to append into
