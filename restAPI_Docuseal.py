@@ -1,6 +1,7 @@
 import os
 import pprint
 import requests
+from typing import List
 
 # ---- CONFIG ----
 DOCUSEAL_URL = "https://api.docuseal.com/submitters"
@@ -10,7 +11,7 @@ if not API_TOKEN:
 #API_TOKEN = os.environ["DOCUSEAL_API_TOKEN"] or 'FmzWAds1rshavQtaN3BWjSvnHsrW9vuUVLTBMjDuZM4' # fallback if env var not set
 
 
-def fetch_submitter_names(url: str, api_token: str) -> list[str]:
+def fetch_submitter_names(url: str, api_token: str) -> List[str]:
     """ 
     Get cac em name that submit the form in the text field 2 ( which is their name) 
     from Docuseal. The data get remove every month.
@@ -23,7 +24,7 @@ def fetch_submitter_names(url: str, api_token: str) -> list[str]:
         raise RuntimeError(f"Docuseal API return {response.status_code}: {response.text}")
     
     data = response.json()
-    names: list[str] = []
+    names: List[str] = []
 
     for submission in data.get('data',[]):
         values_map = {v['field'] :v['value'] for v in submission.get('values',[])}
@@ -35,7 +36,7 @@ def fetch_submitter_names(url: str, api_token: str) -> list[str]:
     return names
 
 if __name__ == '__main__':
-    result = fetch_submitter_names(DOCUSEAL_URL,API_TOKEN)
+    result = fetch_submitter_names(DOCUSEAL_URL, API_TOKEN)
     print(result)
 
 
