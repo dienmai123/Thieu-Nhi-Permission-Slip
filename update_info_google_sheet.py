@@ -2,6 +2,8 @@
 import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+from typing import List
+
 
 
 # ---- EXAMPLE GOOGLE API ----
@@ -15,6 +17,7 @@ START_CELL = "A2"         # where updates begin
 COLUMN_A1 = "A:A"         # which column to append into
 
 # ---- AUTH ----
+
 def _get_service():
     cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "e-ngiem-tap-69a3e7733ae6.json")
     if not os.path.exists(cred_path):
@@ -22,10 +25,11 @@ def _get_service():
     scopes = ["https://www.googleapis.com/auth/spreadsheets"]
     creds = Credentials.from_service_account_file(cred_path, scopes=scopes)
     return build("sheets", "v4", credentials=creds)
+
 '''
 def _get_service():
     creds = Credentials.from_service_account_file(
-        "e-ngiem-tap-69a3e7733ae6.json",
+        "e-ngiem-tap-1ad30daf6fdd.json",
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     return build("sheets", "v4", credentials=creds)
@@ -59,9 +63,39 @@ def append_column(values_1d,sheetID: str,sheet_name: str,column:str):
     ).execute()
     return resp
 
+# ---- GET CURRENT DATA ----
+def get_column_data(sheetID: str, sheet_name: str, column_a1: str):
+    ''' Read the existing values in a column (e.g., 'A:A') and return a flat list'''
+    service = _get_service()
+    rng = f"{sheet_name}!{column_a1}" # e.g., Sheet1!A:A
+    resp = service.spreadsheets().values().get(
+        spreadsheetId = sheetID,
+        range = rng,
+        majorDimension = "COLUMNS",
+        valueRenderOption = "UNFORMATTED_VALUE"
+    ).execute()
+    cols = resp.get("values",[]) #return a list of column
+    col = cols[0] if cols else [] # taking the first column of the google sheet
+    col = col[1:] # Cut the first value, which is the header for this instance
+    return col
+
+# ---- COMPARE ARRRAYS ----
+def compare_array(oldName: List[str], newName: List[str]) -> List[str]:
+    #Example
+    # Current user submission: "Dien, Dat, Chinh"
+    # API call return new user submission: "Dien, Dat, Chinh, Trish" 
+    # Return Trish
+    oldSet = set(oldName)
+    result: List[str] =[]
+
+    for name in newName:
+        if name not in oldSet:
+            result.append(name)
+    return result
+
 # ---- EXAMPLE DATA ----
 # ----------------------
-arr1 = [1,2,3,4]
+arr1 = ['Dien','Dat','Chinh','Trish']
 
 if __name__ == "__main__":
     # Append
@@ -69,6 +103,13 @@ if __name__ == "__main__":
 
     # Update
     #resultUpdate = update_colmun(arr1,SPREADSHEET_ID,SHEET_NAME,START_CELL)
+
+    #result = get_column_data(SPREADSHEET_ID,SHEET_NAME,COLUMN_A1)
+    #print(result)
+    #print(arr1)
+
+    #compareResult = compare_array(result,arr1)
+    #print(compareResult)
 
     print('Done')
 
