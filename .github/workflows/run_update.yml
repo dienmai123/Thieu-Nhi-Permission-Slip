@@ -1,7 +1,7 @@
 name: Daily run_update
 
 on:
-  # Runs every day at ~8:00 AM America/Chicago during DST (GitHub uses UTC)
+  # This will run everyday around 08:00 AM
   schedule:
     - cron: "0 13 * * *"
   # Let you run it manually from the Actions tab

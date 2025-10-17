@@ -18,18 +18,14 @@ def main():
     api_token = os.getenv("DOCUSEAL_API_TOKEN")
     if not api_token:
         raise RuntimeError("DOCUSEAL_API_TOKEN is not set")
-
+    
     # Fetch names
     names = fetch_submitter_names(DOCUSEAL_URL, api_token)
     if not isinstance(names, list):
         raise RuntimeError(f"Unexpected response type from fetch_submitter_names: {type(names)}")
-    print(f"Successfully fetched {len(names)} names from Docuseal")
+    print(f"Succesfully fetch cac em name {names} from Docuseal")
 
-    if not names:
-        print("No names to append")
-        return
-
-    # Append to column A (or switch to update_colmun(...) if you intend cell-by-cell updates)
+    # Append user the to column
     result = append_column(names, SPREADSHEET_ID, SHEET_NAME, COLUMN_A1)
 
 if __name__ == "__main__":
