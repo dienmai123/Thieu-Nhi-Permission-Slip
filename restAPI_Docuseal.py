@@ -27,11 +27,12 @@ def fetch_submitter_names(url: str, api_token: str) -> List[str]:
     names: List[str] = []
 
     for submission in data.get('data',[]):
-        permissionSlipName = submission['template']['name']
+        permissionSlipName = submission['template']['name']   # Specify the specific permission slip
+        status = submission['status']                         # Getting the status of the form                      
         values_map = {v['field'] :v['value'] for v in submission.get('values',[])}
         cac_em_name = values_map.get('Text Field 2')
 
-        if(permissionSlipName == "Lock-In Permission Slip"):
+        if(permissionSlipName == "Lock-In Permission Slip" and status == "completed" ):
             names.append(cac_em_name)
 
     return names
