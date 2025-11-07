@@ -2,8 +2,8 @@ name: Daily run_update
 
 on:
   # This will run everyday around 08:00 AM
-  #schedule:
-  #  - cron: "0 13 * * *"
+  schedule:
+    - cron: "0 13 * * *"
   # Let you run it manually from the Actions tab
   workflow_dispatch:
 

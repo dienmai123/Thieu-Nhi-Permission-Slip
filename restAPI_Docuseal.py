@@ -27,10 +27,11 @@ def fetch_submitter_names(url: str, api_token: str) -> List[str]:
     names: List[str] = []
 
     for submission in data.get('data',[]):
+        permissionSlipName = submission['template']['name']
         values_map = {v['field'] :v['value'] for v in submission.get('values',[])}
         cac_em_name = values_map.get('Text Field 2')
 
-        if cac_em_name:
+        if(permissionSlipName == "Lock-In Permission Slip"):
             names.append(cac_em_name)
 
     return names
